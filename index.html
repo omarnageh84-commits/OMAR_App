@@ -2,59 +2,79 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMAR - Pharmacy Dashboard</title>
     <style>
-        body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .card { background: #1e1e1e; padding: 15px; border-radius: 12px; border: 1px solid #333; }
+        body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 15px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #333; }
         h3 { color: #00a884; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .row { display: flex; justify-content: space-between; padding: 5px 0; align-items: center; }
-        input { width: 60px; background: #333; border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; text-align: center; }
-        button.action { background: #00a884; border: none; padding: 10px; color: #fff; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 8px; text-align: center; }
+        input, select { width: 90%; background: #222; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; text-align: center; }
+        
+        .action { background: #00a884; border: none; padding: 10px; color: #fff; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .negative { color: #ff4d4d; }
+        .positive { color: #00a884; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <!-- قسم الموظفين -->
+    <!-- جدول الموظفين -->
     <div class="card">
         <h3>تقفيلات الموظفين</h3>
-        <div class="row"><span>الاسم</span> <span>أساسي</span> <span>شفت</span></div>
-        <div id="staff-rows"></div>
+        <table>
+            <thead><tr><th>الاسم</th><th>أساسي</th><th>شفت</th></tr></thead>
+            <tbody id="staff-body"></tbody>
+            <tfoot>
+                <tr style="border-top: 2px solid #00a884; font-weight: bold;">
+                    <td>الإجمالي</td>
+                    <td id="total-basic">0</td>
+                    <td id="total-shift">0</td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
 
-    <!-- قسم المصروفات والمشتريات -->
+    <!-- المصروفات والمشتريات -->
     <div class="card">
-        <h3>المصروفات والمشتريات</h3>
-        <input type="text" style="width: 90%" placeholder="اسم المصروف">
+        <h3>المصروفات اليومية</h3>
+        <input type="text" placeholder="اسم المصروف">
         <input type="number" placeholder="القيمة">
         <button class="action">+ إضافة مصروف</button>
-        <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-        <input type="text" style="width: 90%" placeholder="اسم المشتريات">
+        <h3 style="margin-top: 20px;">المشتريات</h3>
+        <input type="text" placeholder="اسم الصنف/الشركة">
         <input type="number" placeholder="القيمة">
         <button class="action">+ إضافة شراء</button>
-    </div>
-
-    <!-- قسم التحويلات -->
-    <div class="card">
-        <h3>جدول المحافظ</h3>
-        <p>💰 فودافون كاش: 01099478956</p>
-        <p>📱 إنستا باي: 01007036085</p>
-        <button class="action" onclick="window.open('https://wa.me/201007036085')">💬 التواصل واتساب</button>
     </div>
 </div>
 
 <script>
-    // إنشاء 7 صفوف موظفين ثابتة
-    const staffNames = ["عم جمال", "عمر", "د. خالد", "د. محمد", "د. محمود", "موظف 6", "موظف 7"];
-    const container = document.getElementById('staff-rows');
-    staffNames.forEach(name => {
-        container.innerHTML += `
-            <div class="row">
-                <span>${name}</span>
-                <input type="number" placeholder="أساسي">
-                <input type="number" placeholder="شفت">
-            </div>`;
+    const employees = ["عم جمال", "عمر", "د. خالد", "د. محمد", "د. محمود", "موظف 6", "موظف 7"];
+    const tbody = document.getElementById('staff-body');
+
+    employees.forEach(name => {
+        tbody.innerHTML += `
+            <tr>
+                <td><select><option>${name}</option></select></td>
+                <td><input type="number" class="basic" value="0" oninput="calc()"></td>
+                <td><input type="number" class="shift" value="0" oninput="updateColor(this); calc()"></td>
+            </tr>`;
     });
+
+    function updateColor(input) {
+        input.className = (parseFloat(input.value) < 0) ? 'shift negative' : 'shift positive';
+    }
+
+    function calc() {
+        let bSum = 0, sSum = 0;
+        document.querySelectorAll('.basic').forEach(i => bSum += parseFloat(i.value) || 0);
+        document.querySelectorAll('.shift').forEach(i => sSum += parseFloat(i.value) || 0);
+        document.getElementById('total-basic').innerText = bSum;
+        document.getElementById('total-shift').innerText = sSum;
+    }
 </script>
 </body>
 </html>
