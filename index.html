@@ -2,78 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMAR - Pharmacy Dashboard</title>
     <style>
         body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 15px; }
+        /* نظام التبويبات */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tabs button { padding: 10px 20px; background: #333; border: none; color: #fff; border-radius: 8px; cursor: pointer; }
+        .tabs button.active { background: #00a884; }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        /* تصميم الكاردز والجدول */
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
         .card { background: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #333; }
-        h3 { color: #00a884; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        
+        h3 { color: #00a884; border-bottom: 1px solid #333; padding-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 8px; text-align: center; }
-        input, select { width: 90%; background: #222; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; text-align: center; }
-        
-        .action { background: #00a884; border: none; padding: 10px; color: #fff; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        .negative { color: #ff4d4d; }
-        .positive { color: #00a884; }
+        td, th { padding: 8px; text-align: center; }
+        input, select { width: 90%; background: #222; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; }
+        .action { background: #00a884; border: none; padding: 10px; color: #fff; width: 100%; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <!-- جدول الموظفين -->
-    <div class="card">
-        <h3>تقفيلات الموظفين</h3>
-        <table>
-            <thead><tr><th>الاسم</th><th>أساسي</th><th>شفت</th></tr></thead>
-            <tbody id="staff-body"></tbody>
-            <tfoot>
-                <tr style="border-top: 2px solid #00a884; font-weight: bold;">
-                    <td>الإجمالي</td>
-                    <td id="total-basic">0</td>
-                    <td id="total-shift">0</td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+<!-- شريط التنقل -->
+<div class="tabs">
+    <button class="active" onclick="showPage('home')">يومية اليوم</button>
+    <button onclick="showPage('database')">قاعدة البيانات</button>
+    <button onclick="showPage('settings')">الإعدادات</button>
+</div>
 
-    <!-- المصروفات والمشتريات -->
+<!-- صفحة اليومية -->
+<div id="home" class="page active">
+    <div class="dashboard">
+        <!-- هنا هنحط كود جدول الموظفين والمصروفات اللي عملناه -->
+        <div class="card"><h3>تقفيلات الموظفين</h3>...</div>
+        <div class="card"><h3>المصروفات والمشتريات</h3>...</div>
+    </div>
+</div>
+
+<!-- صفحة قاعدة البيانات -->
+<div id="database" class="page">
     <div class="card">
-        <h3>المصروفات اليومية</h3>
-        <input type="text" placeholder="اسم المصروف">
-        <input type="number" placeholder="القيمة">
-        <button class="action">+ إضافة مصروف</button>
-        <h3 style="margin-top: 20px;">المشتريات</h3>
-        <input type="text" placeholder="اسم الصنف/الشركة">
-        <input type="number" placeholder="القيمة">
-        <button class="action">+ إضافة شراء</button>
+        <h3>سجل العمليات التاريخي</h3>
+        <p>جاري تحميل البيانات من Google Sheets... 📊</p>
+        <button class="action" onclick="alert('جارٍ الربط بالـ API')">تحديث البيانات</button>
     </div>
 </div>
 
 <script>
-    const employees = ["عم جمال", "عمر", "د. خالد", "د. محمد", "د. محمود", "موظف 6", "موظف 7"];
-    const tbody = document.getElementById('staff-body');
-
-    employees.forEach(name => {
-        tbody.innerHTML += `
-            <tr>
-                <td><select><option>${name}</option></select></td>
-                <td><input type="number" class="basic" value="0" oninput="calc()"></td>
-                <td><input type="number" class="shift" value="0" oninput="updateColor(this); calc()"></td>
-            </tr>`;
-    });
-
-    function updateColor(input) {
-        input.className = (parseFloat(input.value) < 0) ? 'shift negative' : 'shift positive';
-    }
-
-    function calc() {
-        let bSum = 0, sSum = 0;
-        document.querySelectorAll('.basic').forEach(i => bSum += parseFloat(i.value) || 0);
-        document.querySelectorAll('.shift').forEach(i => sSum += parseFloat(i.value) || 0);
-        document.getElementById('total-basic').innerText = bSum;
-        document.getElementById('total-shift').innerText = sSum;
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        event.target.classList.add('active');
     }
 </script>
 </body>
