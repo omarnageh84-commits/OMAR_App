@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OMAR - صيدلية</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+    <h2>تسجيل يومية الصيدلية</h2>
+    
+    <input type="number" id="sales" placeholder="إجمالي المبيعات">
+    <input type="number" id="expenses" placeholder="إجمالي المصاريف">
+    
+    <button onclick="saveData()">حفظ البيانات 💊</button>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwv95h5ZuUbWpWcpzNCxuFg1LnhCupAXGQ_0G-Wr-RXR552t-bknv4HWZKw5IUvx61OLg/exec";
+
+        function saveData() {
+            let sales = document.getElementById('sales').value;
+            let expenses = document.getElementById('expenses').value;
+
+            // الزتونة: بنبعت البيانات للسيرفر
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({sales: sales, expenses: expenses})
+            })
+            .then(() => {
+                alert("تم تسجيل اليومية يا بطل! 🚀");
+                document.getElementById('sales').value = '';
+                document.getElementById('expenses').value = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("في حاجة غلط، اتأكد من النت وجرب تاني");
+            });
+        }
+    </script>
+</body>
+</html>
