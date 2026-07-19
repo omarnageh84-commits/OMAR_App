@@ -2,84 +2,59 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; }
-        .tabs button { flex: 1; padding: 10px; background: #1e1e1e; border: 1px solid #333; color: #fff; border-radius: 8px; cursor: pointer; }
-        .sub-tabs { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .sub-tabs button { flex: 1; padding: 8px; background: #333; border: none; color: #fff; border-radius: 5px; cursor: pointer; }
-        .page, .sub-page { display: none; }
-        .active { display: block; }
-        .card { background: #1e1e1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
-        input { width: 90%; padding: 8px; margin: 5px 0; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .card { background: #1e1e1e; padding: 15px; border-radius: 12px; border: 1px solid #333; }
+        h3 { color: #00a884; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .row { display: flex; justify-content: space-between; padding: 5px 0; align-items: center; }
+        input { width: 60px; background: #333; border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; text-align: center; }
         button.action { background: #00a884; border: none; padding: 10px; color: #fff; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="tabs">
-        <button onclick="showPage('pharmacy')">الصيدلية</button>
-        <button onclick="showPage('personal')">الخاص</button>
-        <button onclick="showPage('database')">القاعدة</button>
+<div class="dashboard">
+    <!-- قسم الموظفين -->
+    <div class="card">
+        <h3>تقفيلات الموظفين</h3>
+        <div class="row"><span>الاسم</span> <span>أساسي</span> <span>شفت</span></div>
+        <div id="staff-rows"></div>
     </div>
 
-    <!-- صفحة الصيدلية -->
-    <div id="pharmacy" class="page active">
-        <div class="sub-tabs">
-            <button onclick="showSub('sales')">المبيعات</button>
-            <button onclick="showSub('expenses')">المصروفات</button>
-            <button onclick="showSub('transfers')">التحويلات</button>
-            <button onclick="showSub('totals')">الإجمالي</button>
-        </div>
-
-        <div id="sales" class="sub-page active card">
-            <h3>مبيعات الـ 7 شفتات</h3>
-            <div id="shift-inputs"></div>
-            <button class="action">حفظ المبيعات</button>
-        </div>
-
-        <div id="expenses" class="sub-page card">
-            <h3>المشتريات والمصروفات</h3>
-            <div id="exp-inputs"></div>
-            <button class="action">حفظ المصروفات</button>
-        </div>
-
-        <div id="transfers" class="sub-page card">
-            <h3>وسائل الدفع</h3>
-            <p>💰 فودافون كاش: 01099478956</p>
-            <p>📱 إنستا باي: 01007036085</p>
-        </div>
-
-        <div id="totals" class="sub-page card">
-            <h3>إجمالي الأيام</h3>
-            <input type="text" id="search" placeholder="بحث بالتاريخ أو الساعة...">
-            <div id="data-table"></div>
-        </div>
+    <!-- قسم المصروفات والمشتريات -->
+    <div class="card">
+        <h3>المصروفات والمشتريات</h3>
+        <input type="text" style="width: 90%" placeholder="اسم المصروف">
+        <input type="number" placeholder="القيمة">
+        <button class="action">+ إضافة مصروف</button>
+        <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+        <input type="text" style="width: 90%" placeholder="اسم المشتريات">
+        <input type="number" placeholder="القيمة">
+        <button class="action">+ إضافة شراء</button>
     </div>
 
-    <script>
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+    <!-- قسم التحويلات -->
+    <div class="card">
+        <h3>جدول المحافظ</h3>
+        <p>💰 فودافون كاش: 01099478956</p>
+        <p>📱 إنستا باي: 01007036085</p>
+        <button class="action" onclick="window.open('https://wa.me/201007036085')">💬 التواصل واتساب</button>
+    </div>
+</div>
 
-        function showSub(id) {
-            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        // إنشاء 7 شفتات
-        const shiftContainer = document.getElementById('shift-inputs');
-        for(let i=1; i<=7; i++) {
-            shiftContainer.innerHTML += `<input placeholder="شفت ${i}: قيمة/عجز/زيادة">`;
-        }
-
-        // إنشاء 10 سطور مصروفات
-        const expContainer = document.getElementById('exp-inputs');
-        for(let i=1; i<=10; i++) {
-            expContainer.innerHTML += `<input placeholder="مصروف ${i}">`;
-        }
-    </script>
+<script>
+    // إنشاء 7 صفوف موظفين ثابتة
+    const staffNames = ["عم جمال", "عمر", "د. خالد", "د. محمد", "د. محمود", "موظف 6", "موظف 7"];
+    const container = document.getElementById('staff-rows');
+    staffNames.forEach(name => {
+        container.innerHTML += `
+            <div class="row">
+                <span>${name}</span>
+                <input type="number" placeholder="أساسي">
+                <input type="number" placeholder="شفت">
+            </div>`;
+    });
+</script>
 </body>
 </html>
