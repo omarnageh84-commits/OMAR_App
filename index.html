@@ -1,44 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <title>OMAR - صيدلية</title>
-    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; background-color: #1a1a1a; color: white; margin: 20px; }
+        .dashboard { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; }
+        .card { background: #2d2d2d; padding: 15px; border-radius: 8px; border: 1px solid #444; }
+        h3 { border-bottom: 2px solid #00a884; padding-bottom: 10px; }
+        input { width: 100%; margin-bottom: 5px; background: #333; color: white; border: 1px solid #555; padding: 5px; }
+        button { background: #00a884; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; }
+    </style>
 </head>
 <body>
 
-    <h2>تسجيل يومية الصيدلية</h2>
-    
-    <input type="number" id="sales" placeholder="إجمالي المبيعات">
-    <input type="number" id="expenses" placeholder="إجمالي المصاريف">
-    
-    <button onclick="saveData()">حفظ البيانات 💊</button>
+    <div class="dashboard">
+        <!-- 1. جدول اليومية -->
+        <div class="card">
+            <h3>جدول اليومية</h3>
+            <table width="100%">
+                <tr><th>التاريخ</th><th>المبيعات</th><th>المصاريف</th></tr>
+                <!-- هنا هيتحط الكود اللي بيسحب من الشيت -->
+            </table>
+        </div>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwv95h5ZuUbWpWcpzNCxuFg1LnhCupAXGQ_0G-Wr-RXR552t-bknv4HWZKw5IUvx61OLg/exec";
+        <!-- 2. المشتريات والمصاريف -->
+        <div class="card">
+            <h3>المشتريات اليوم</h3>
+            <input placeholder="المبلغ">
+            <h3>مصروفات اليوم</h3>
+            <input placeholder="نوع المصروف">
+            <button>إضافة مصروف</button>
+        </div>
 
-        function saveData() {
-            let sales = document.getElementById('sales').value;
-            let expenses = document.getElementById('expenses').value;
+        <!-- 3. شفتات الموظفين -->
+        <div class="card">
+            <h3>الموظفين</h3>
+            <p>عم جمال: <span>شفت</span></p>
+            <p>عمر: <span>شفت</span></p>
+        </div>
+    </div>
 
-            // الزتونة: بنبعت البيانات للسيرفر
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({sales: sales, expenses: expenses})
-            })
-            .then(() => {
-                alert("تم تسجيل اليومية يا بطل! 🚀");
-                document.getElementById('sales').value = '';
-                document.getElementById('expenses').value = '';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("في حاجة غلط، اتأكد من النت وجرب تاني");
-            });
-        }
-    </script>
 </body>
 </html>
