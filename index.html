@@ -4,61 +4,65 @@
     <meta charset="UTF-8">
     <style>
         body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
-        
-        /* التبويبات */
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; }
         .tabs button { flex: 1; padding: 10px; background: #1e1e1e; border: 1px solid #333; color: #fff; border-radius: 8px; cursor: pointer; }
         .tabs button:hover { background: #00a884; }
-        
-        /* الصفحات */
         .page { display: none; }
         .active { display: block; }
-        
-        /* الكروت */
         .card { background: #1e1e1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
         input { width: 90%; padding: 10px; margin: 5px 0; background: #333; border: 1px solid #555; color: #fff; border-radius: 5px; }
         button.save { background: #00a884; border: none; padding: 10px; color: #fff; width: 100%; border-radius: 5px; cursor: pointer; }
+        h3 { color: #00a884; border-bottom: 1px solid #333; padding-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- التبويبات -->
     <div class="tabs">
         <button onclick="showPage('pharmacy')">الصيدلية</button>
         <button onclick="showPage('personal')">الخاص</button>
         <button onclick="showPage('database')">القاعدة</button>
     </div>
 
-    <!-- 1. صفحة الصيدلية -->
     <div id="pharmacy" class="page active">
         <div class="card">
-            <h3>حسابات اليوم</h3>
+            <h3>تسجيل اليومية</h3>
             <input type="number" id="sales" placeholder="المبيعات">
             <input type="number" id="expenses" placeholder="المصاريف">
             <button class="save" onclick="saveData()">حفظ البيانات</button>
         </div>
+        <div class="card">
+            <h3>ملخص اليوم</h3>
+            <p id="status">جاري تحميل البيانات...</p>
+        </div>
     </div>
 
-    <!-- 2. صفحة الخاص -->
     <div id="personal" class="page">
         <div class="card"><h3>الديون والملاحظات</h3><p>قريباً...</p></div>
     </div>
 
-    <!-- 3. صفحة القاعدة -->
     <div id="database" class="page">
-        <div class="card"><h3>بيانات الموظفين</h3><p>جاري التحميل من الشيت...</p></div>
+        <div class="card"><h3>بيانات الموظفين</h3><p>جاري التحميل...</p></div>
     </div>
 
     <script>
-        // دالة التنقل
+        const SCRIPT_URL = "YOUR_NEW_DEPLOYED_URL_HERE"; // حط الرابط الجديد بعد الـ Deploy
+
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
         }
 
-        // دالة الحفظ (اربطها برابط الـ Web App بتاعك)
+        function updateSummary() {
+            fetch(SCRIPT_URL)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').innerHTML = 
+                    `المبيعات: ${data.sales} ج.م <br> المصروفات: ${data.expenses} ج.م`;
+            })
+            .catch(() => document.getElementById('status').innerText = "حدث خطأ في تحميل البيانات");
+        }
+
         function saveData() {
-            const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE"; 
             const data = {
                 sales: document.getElementById('sales').value,
                 expenses: document.getElementById('expenses').value
@@ -69,8 +73,13 @@
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
-            }).then(() => alert("تم الحفظ يا دكتور!"));
+            }).then(() => {
+                alert("تم الحفظ يا دكتور!");
+                updateSummary(); // تحديث الملخص فوراً
+            });
         }
+
+        window.onload = updateSummary;
     </script>
 </body>
 </html>
