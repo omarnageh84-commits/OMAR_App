@@ -1,44 +1,58 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8">
     <style>
-        body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; }
-        .tabs button { flex: 1; padding: 10px; background: #1e1e1e; border: 1px solid #333; color: #fff; border-radius: 8px; cursor: pointer; }
-        .tabs button:active { background: #00a884; }
-        .card { background: #1e1e1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
-        .page { display: none; }
-        .active { display: block; }
+        body { background: #121212; color: #fff; font-family: sans-serif; margin: 20px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        input { width: 90%; padding: 10px; margin: 10px 0; background: #333; border: 1px solid #555; color: #fff; border-radius: 5px; }
+        button { background: #00a884; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
+        h3 { color: #00a884; border-bottom: 1px solid #333; padding-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- التبويبات -->
-    <div class="tabs">
-        <button onclick="showPage('pharmacy')">الصيدلية</button>
-        <button onclick="showPage('personal')">الخاص</button>
-        <button onclick="showPage('database')">القاعدة</button>
-    </div>
+    <div class="dashboard">
+        <!-- كارت إضافة البيانات -->
+        <div class="card">
+            <h3>تسجيل اليومية</h3>
+            <input type="number" id="sales" placeholder="المبيعات (ج.م)">
+            <input type="number" id="expenses" placeholder="المصروفات (ج.م)">
+            <button onclick="saveData()">حفظ البيانات 💾</button>
+        </div>
 
-    <!-- 1. الصيدلية -->
-    <div id="pharmacy" class="page active">
-        <div class="card"><h3>حسابات اليوم</h3><p>مشتريات: 0 ج.م</p><p>مصروفات: 0 ج.م</p></div>
-    </div>
-
-    <!-- 2. الخاص -->
-    <div id="personal" class="page">
-        <div class="card"><h3>الديون</h3><button>+ إضافة دين</button></div>
-    </div>
-
-    <!-- 3. قاعدة البيانات -->
-    <div id="database" class="page">
-        <div class="card"><h3>جدول الموظفين</h3><p>د. أحمد محمود</p></div>
+        <!-- كارت عرض الداتا -->
+        <div class="card">
+            <h3>ملخص اليوم</h3>
+            <p id="status">جاهز للاستخدام... 🚀</p>
+        </div>
     </div>
 
     <script>
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+        const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE"; // <--- حط الرابط بتاعك هنا
+
+        function saveData() {
+            const sales = document.getElementById('sales').value;
+            const expenses = document.getElementById('expenses').value;
+            const status = document.getElementById('status');
+
+            status.innerText = "جاري الحفظ...";
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sales: sales, expenses: expenses })
+            })
+            .then(() => {
+                status.innerText = "تم الحفظ يا دكتور! ✅";
+                setTimeout(() => status.innerText = "جاهز للاستخدام... 🚀", 3000);
+            })
+            .catch(err => {
+                status.innerText = "في مشكلة حصلت! ❌";
+                console.error(err);
+            });
         }
     </script>
 </body>
